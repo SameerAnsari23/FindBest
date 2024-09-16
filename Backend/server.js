@@ -16,8 +16,14 @@ const getelectronicdesc = require("./Categories/SmartPhonesWebsites/Gadget360Mod
 
 // middlewares
 const app = express();
+app.use(cors( {
+  origin: ["https://deploy-mern-1whq.vercel.app"],
+  methods: ["POST", "GET"],
+  credentials: true
+}
+));
 app.use(express.json());
-app.use(cors());
+
 
 const port = process.env.PORT;
 // Define the API endpoint for medicine search
