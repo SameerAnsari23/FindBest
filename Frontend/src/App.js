@@ -6,6 +6,7 @@ import SmartPhoneSearchPage from "./pages/SmartPhoneSearchPage.jsx"
 import "./index.css";
 
 import MedicalSeachPage from "./pages/MedicalSeachPage.jsx";
+import AISearchPage from "./pages/AISearchPage.jsx";
 import ClothingSearchPage from "./pages/ClothingSearchPage.jsx";
 import GrocerySearchPage from "./pages/GrocerySearchPage.jsx";
 
@@ -20,6 +21,7 @@ function App() {
         <Route path="/search-page/clothing" element={<ClothingSearchPage />} />
         <Route path="/search-page/grocery" element={<GrocerySearchPage />} />
         <Route path="/search-page/smartphone" element={<SmartPhoneSearchPage />} />
+        <Route path="/search-page/ai" element={<AISearchPage />} />
       </Routes>
     </Router>
   );

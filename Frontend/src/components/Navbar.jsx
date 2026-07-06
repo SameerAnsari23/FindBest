@@ -14,6 +14,12 @@ const Navbar = () => {
 
         {/* Right: Navigation Links */}
         <div className="flex items-center space-x-6">
+          <Link
+            to="/search-page/ai"
+            className="text-lg font-semibold bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full px-4 py-1.5 hover:opacity-90 transition duration-300 ease-in-out"
+          >
+            ✨ AI Search
+          </Link>
           {/* <Link
             to="/features"
             className="text-lg font-medium text-gray-700 hover:text-purple-600 transition duration-300 ease-in-out"

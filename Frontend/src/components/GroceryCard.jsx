@@ -51,7 +51,7 @@ const groceryCard = ({
           </a>
         </div>
       </div>
-      <div className="font-bold pt-2 text-lg text-sky-900">grocerys from {scrapFrom}</div>
+      <div className="font-bold pt-2 text-lg text-sky-900">Groceries from {scrapFrom}</div>
     </div>
   );
 };

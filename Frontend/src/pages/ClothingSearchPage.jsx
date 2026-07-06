@@ -5,18 +5,19 @@ import {API} from "../backend.js"
 const ClothingSearchPage = () => {
   const [searchInput, setSearchInput] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const handleSearch = async () => {
+    setLoading(true);
     try {
-      console.log(searchInput);
       const response = await axios.get(
         `${API}/api/clothing/${searchInput}`
       );
       setSearchResults(response.data);
-      console.log(response.data);
     } catch (error) {
       console.error(error);
     }
+    setLoading(false);
   };
 
   return (
@@ -36,7 +37,11 @@ const ClothingSearchPage = () => {
         Search
       </button>
       <div className="mt-6 mx-auto">
-        {searchResults.length === 1 ? (
+        {loading ? (
+          <p className="text-pink-600 text-lg font-semibold">
+            Searching Myntra, Ajio &amp; Snapdeal… this can take up to a minute.
+          </p>
+        ) : searchResults.length === 0 ? (
           <p>No results found.</p>
         ) : (
           <div className="p-8">

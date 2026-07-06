@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
 const ClothingCard = ({
   link,
@@ -35,14 +34,14 @@ const ClothingCard = ({
           {image ? (
             <img
               src={image}
-              alt="groceryImage"
+              alt={title}
               width="200px"
               height="200px"
             />
           ) : (
             <img
               src="https://img.freepik.com/premium-vector/pills-liquids-grocery-children-kawaii-doodle-flat-vector-illustration_609998-86.jpg?w=2000"
-              alt="groceryImage"
+              alt="placeholder"
               width="200px"
               height="200px"
             />
@@ -55,15 +54,15 @@ const ClothingCard = ({
             </a>
           </p> */}
 
-          <div> <span className="font-medium text-sky-900">MRP :</span> {discountPrice}</div>
-          <div> <span className="font-medium text-sky-900">DiscountPrice :</span>{(price === 'Rs. undefined') ? <h4>No discount available</h4> : <h4 className="line-through">{price}</h4>}</div>
+          <div> <span className="font-medium text-sky-900">MRP :</span>{(price === 'Rs. undefined') ? <h4>No discount available</h4> : <h4 className="line-through">{price}</h4>}</div>
+          <div> <span className="font-medium text-sky-900">DiscountPrice :</span> {discountPrice}</div>
           <div> <span className="font-medium text-sky-900">You Save :</span> {(discount === 'NaN% Off') ? <h4>0% Off</h4> : <h4>{discount}</h4>}</div>
           <a href={link} target="_blank" rel="noopener noreferrer">
             <button className="card-button mt-1 text-white p-1 rounded-lg bg-pink-500 w-36">More in Detail</button>
           </a>
         </div>
       </div>
-      <div className="font-bold pt-2 text-lg text-sky-900">grocerys from {scrapFrom}</div>
+      <div className="font-bold pt-2 text-lg text-sky-900">Clothes from {scrapFrom}</div>
     </div>
   );
 };

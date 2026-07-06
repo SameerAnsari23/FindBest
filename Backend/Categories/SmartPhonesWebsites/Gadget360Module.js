@@ -4,96 +4,51 @@ puppeteer.use(StealthPlugin());
 const AdblockerPlugin = require("puppeteer-extra-plugin-adblocker");
 puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
 
+// 91mobiles redesigned their search page: results are now rendered as
+// <article class="product-wdgt"> cards instead of the old
+// ".finder_snipet_wrap" Angular widgets. All fields are read from the card.
 const getelectronicdesc = async (URL) => {
-  let data = [];
-  const browser = await puppeteer.launch({ headless: "new" });
-  const page = await browser.newPage();
+  let browser;
+  try {
+    browser = await puppeteer.launch({ headless: "new" });
+    const page = await browser.newPage();
+    await page.setUserAgent(
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
+    );
 
-  await page.goto(URL, { waitUntil: "domcontentloaded" });
-  const ua =
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36";
-  await page.setUserAgent(ua);
+    await page.goto(URL, { waitUntil: "domcontentloaded", timeout: 60000 });
+    await page.waitForSelector("article.product-wdgt", { timeout: 30000 });
 
-  await page.waitForSelector(
-    ".finder_snipet_wrap.finder_snipet_wrap_grid.ng-scope"
-  );
-  const elements = await page.$$(
-    ".finder_snipet_wrap.finder_snipet_wrap_grid.ng-scope"
-  );
+    const data = await page.evaluate(() => {
+      const cards = [...document.querySelectorAll("article.product-wdgt")].slice(0, 12);
+      return cards
+        .map((el) => {
+          const name = el.querySelector("h2 a")?.textContent.trim() || "";
+          const fullURL = el.querySelector("h2 a")?.getAttribute("href") || "";
+          const imgEl = el.querySelector(".prd_img img");
+          const image =
+            imgEl?.getAttribute("src") || imgEl?.getAttribute("data-src") || null;
+          const price = el.querySelector(".store_prc")?.textContent.trim() || "N/A";
+          const SPEC_SCORE = el.querySelector(".prd_score")?.textContent.trim() || "N/A";
+          const Status =
+            el.querySelector(".rl-date")?.textContent.trim() || "Available";
+          // e.g. "4.6/5(16,044 Ratings)" — keep just "4.6/5"
+          const ratingRaw =
+            el.querySelector(".user_rating .icn_star")?.textContent.trim() || "";
+          const Ratings = ratingRaw ? ratingRaw.split("(")[0] : "N/A";
 
-  let maxlen=12;
-  if(elements.length<maxlen){
-    maxlen=elements.length
+          return { name, image, price, SPEC_SCORE, Status, Ratings, fullURL, scrapFrom: "91mobiles" };
+        })
+        .filter((p) => p.name);
+    });
+
+    await browser.close();
+    return data;
+  } catch (error) {
+    console.error("91mobiles scraper failed:", error.message);
+    if (browser) await browser.close();
+    return [];
   }
-
-  // console.log(elements.length);
-  // console.log(elements)
-
-  for (let i = 0; i < maxlen; i++) {
-    
-    const image = await page.evaluate(
-      (el) =>
-        el.querySelector(".product_img>img").getAttribute("src"),
-      elements[i]
-    );
-
-    let name = await page.evaluate(
-      (el) =>
-        el.querySelector(".pro_grid_name>a")
-          .textContent,
-      elements[i]
-    );
-   
-    let price = await page.evaluate(
-      (el) =>
-        el.querySelector(".pro_grid_price div>div")
-          .textContent,
-      elements[i]
-    );
-    let SPEC_SCORE=await page.evaluate(
-      (el) =>
-        el.querySelector(".rating_box_new_list")
-          .textContent,
-      elements[i]
-    );
-
-    let Status=await page.evaluate(
-      (el) =>
-        el.querySelector(".notifiy-panel .expected-price>div")
-          .textContent,
-      elements[i]
-    );
-
-    let Ratings=await page.evaluate(
-      (el) =>
-        el.querySelector(".rating_block>p")
-          .textContent,
-      elements[i]
-    );
-
-    let link=await page.evaluate(
-      (el) =>
-        el.querySelector("li>span.target_link_new_tab").getAttribute("data-href-url"),
-      elements[i]
-    );
-    const fullURL="https://www.91mobiles.com/"+link;
-
-    name=name.trim();
-    price=price.trim();
-    SPEC_SCORE=SPEC_SCORE.trim();
-    Status=Status.trim();
-    Ratings=Ratings.trim();
-      const scrapFrom="91mobiles";
-    data.push({name,image,price,SPEC_SCORE,Status,Ratings,fullURL,scrapFrom});
-  }
-
-  //console.log(data)
-  await browser.close();
-  
-  return data;
 };
-
-const URL = "https://www.91mobiles.com/search_page.php?q=iphone";
-//getelectronicdesc(URL);
 
 module.exports = getelectronicdesc;

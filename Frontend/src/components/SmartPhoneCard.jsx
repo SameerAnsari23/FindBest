@@ -12,7 +12,6 @@ const SmartPhoneCard = ({
 }) => {
   // const groceryName={name};
   // const groceryURL={url};
-  console.log("vineet"+{ name });
   return (
     <div className="w-auto p-4 border-4 border-blue-500 rounded-lg bg-white shadow-2xl hover:shadow-none">
       <h2 className="card-title mb-2 font-bold text-xl text-sky-900">{name}</h2>
@@ -22,14 +21,14 @@ const SmartPhoneCard = ({
           {image ? (
             <img
               src={image}
-              alt="smartphone image"
+              alt={name}
               width="200px"
               height="200px"
             />
           ) : (
             <img
               src="https://img.freepik.com/premium-vector/pills-liquids-grocery-children-kawaii-doodle-flat-vector-illustration_609998-86.jpg?w=2000"
-              alt="groceryImage"
+              alt="placeholder"
               width="200px"
               height="200px"
             />
@@ -52,7 +51,7 @@ const SmartPhoneCard = ({
           </a>
         </div>
       </div>
-      <div className="font-bold pt-2 text-lg text-sky-900">grocerys from {scrapFrom}</div>
+      <div className="font-bold pt-2 text-lg text-sky-900">Smartphones from {scrapFrom}</div>
     </div>
   );
 };

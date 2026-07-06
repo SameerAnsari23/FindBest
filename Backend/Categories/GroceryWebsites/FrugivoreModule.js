@@ -1,128 +1,69 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 
+// Frugivore now renders all product data (name, price, MRP, pack size,
+// discount, image) directly on the search-results card, so a single request
+// is enough — no need to visit every product-detail page like before.
 const getGroceryFrugivoreDescription = async (URL) => {
   try {
-    const response = await axios.get(URL);
+    const response = await axios.get(URL, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36",
+      },
+      timeout: 30000,
+    });
+
+    const $ = cheerio.load(response.data);
     const SearchResultArrForFrugivoreGrocery = [];
-    const html = response.data;
-    let $ = cheerio.load(html);
 
-    let itemlist = $(".col-lg-3.col-md-4.col-sm-6");
-    // console.log(itemlist.length);
-    let minlength=12;
-    if(minlength>=itemlist.length)
-    {
-      minlength=itemlist.length - itemlist.length%6;
-    }
-    for (let i = 0; i < minlength; i++) {
-      // let groceryName = $(itemlist[i]).find(".d-block.text-blackish.weight500").text();
-      // console.log(groceryName);
-      let groceryurl = $(itemlist[i]).find("a").attr("href");
-      // console.log(groceryurl);
-      const fullURL="https://frugivore.in"+groceryurl;
-      // console.log(fullURL);
-      const SingleGroceryFrugivoreDescription=await getGroceryFrugivoreDescriptionHelper(fullURL);
-      // console.log(SingleGroceryDescription);
-      SearchResultArrForFrugivoreGrocery.push(SingleGroceryFrugivoreDescription);
-      // console.log(searchResults.length);
+    const cards = $(".col-lg-3.col-md-4.col-sm-6");
+    const maxItems = Math.min(cards.length, 12);
+
+    for (let i = 0; i < maxItems; i++) {
+      const card = $(cards[i]);
+
+      const groceryName = card.find(".pc-name").text().trim();
+      if (!groceryName) continue;
+
+      const href = card.find("a.pc-2025-wrap").attr("href") || card.find("a").attr("href") || "";
+      const groceryURL = href.startsWith("http") ? href : `https://frugivore.in${href}`;
+
+      const groceryIMG =
+        card.find(".pc-image img").attr("data-src") ||
+        card.find(".pc-image img").attr("src") ||
+        null;
+
+      // "Rs 399" → current selling price
+      const groceryNewPrice = card.find(".pc-price-now").text().replace(/\s+/g, " ").trim();
+      // "Rs 499" → striked-through MRP (absent when there is no discount)
+      let groceryMRP = card.find(".pc-price-mrp").text().replace(/\s+/g, " ").trim();
+      if (!groceryMRP) groceryMRP = groceryNewPrice;
+
+      // "25% OFF" badge (absent when there is no discount)
+      let grocerySavedPrice = card.find(".pc-badge--discount").text().replace(/\s+/g, " ").trim();
+      if (!grocerySavedPrice) grocerySavedPrice = "0% Off";
+
+      // Selected pack size, e.g. "1 Kg"
+      const groceryQnty = card.find(".pc-pack-label").first().text().trim();
+
+      SearchResultArrForFrugivoreGrocery.push({
+        groceryIMG,
+        groceryName,
+        groceryURL,
+        groceryMRP,
+        groceryNewPrice,
+        grocerySavedPrice,
+        groceryQnty,
+        scrapFrom: "Frugivore",
+      });
     }
 
-    // console.log(SearchResultArrForFrugivoreGrocery);
     return SearchResultArrForFrugivoreGrocery;
   } catch (err) {
-    console.error(err);
+    console.error("Frugivore scraper failed:", err.message);
+    return [];
   }
 };
-
-
-const getGroceryFrugivoreDescriptionHelper= async(URL)=>
-{
-  try {
-    // console.log('before :');
-    const response = await axios.get(URL);
-    // console.log(URL);
-    const html = response.data;
-    const $ = cheerio.load(html);
-    
-    // const medicineimagearr=$('.ClickableElement_clickable__ItKj2.ProductImageCarousel_clickableImg__YVeX_');
-    // const medicineimage=$(medicineimagearr[0]).find('img').attr('src');
-    // console.log("medicineimage : ",medicineimagearr);
-    // console.log("medicineimagearr "+medicineimagearr.length);
-
-
-    const groceryIMG=$('.slideMainImg').find('img').attr('src');
-    // console.log("groceryIMG :"+groceryIMG);
-    // const medicineIMG=$('.image-gallery-slides').find('img').attr('src');
-
-    const groceryName=$('.productDescHeading').text();
-    // console.log("medicinename "+medicineName);
-    // const delivarye=$('.Edd_eddDetails__8kgLR>div').text();
-    // const date=$(".Edd_eddDetails__8kgLR span").text();
-    // console.log("date "+date);
-
-    
-
-    var groceryMRP=$('.mrptext.strike>span').text();
-    groceryMRP = groceryMRP.substr(groceryMRP.indexOf(' ') + 1);
-    // console.log(medicineMRP);
-
-
-
-    const groceryofferarray=$('.SavedPricetext.SavedPrice-price');
-    // const medicineNewPrice=$('.SavedPricetext.SavedPrice-price').text();
-    // const grocerySavedPrice=$(groceryofferarray[1]).text();
-    // console.log("medicinenewPrice : ",medicinenewPrice);
-    // console.log("medicinesavedPrice : ",medicinesavedPrice);
-
-    const groceryNewPrice=$('.discounttext.discount-price>span:first-of-type').text();
-
-    var grocerySavedPrice=$('.freetext').text();
-    const groceryURL=URL;
-    if(grocerySavedPrice.length===0)
-    {
-      grocerySavedPrice="0% Off";
-      groceryMRP=groceryNewPrice;
-    }
-    else{
-      grocerySavedPrice = grocerySavedPrice.substr(grocerySavedPrice.indexOf(' ') + 1);
-      while(grocerySavedPrice.charAt(0)===' ')
-      {
-        grocerySavedPrice=grocerySavedPrice.substr(1);
-      }
-      groceryMRP=groceryMRP.replace(/(\r\n|\n|\r)/gm, "");;
-    }
-
-    // const groceryExpectedDate=$('.delivery-type-container>p>span').text();
-
-    const groceryQnty=$('.col-lg-6>div>ul>li:first-of-type>label').text();
-
-    const scrapFrom="Frugivore";
-
-
-
-
-
-
-
-    const SingleGroceryFrugivoreDescription = {
-      groceryIMG,
-      groceryName,
-      groceryURL,      
-      groceryMRP,
-      groceryNewPrice,
-      grocerySavedPrice,
-    //   groceryExpectedDate,
-      groceryQnty,
-      scrapFrom,
-    };
-    // console.log(SingleGroceryDescription);
-    return SingleGroceryFrugivoreDescription;
-  }
-  catch(error) {
-    console.error(error);
-  }
-
-}
 
 module.exports = getGroceryFrugivoreDescription;
