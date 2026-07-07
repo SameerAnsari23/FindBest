@@ -9,8 +9,8 @@ const Areas = () => {
   };
 
   return (
-    <div className="h-[517px] flex items-center justify-center bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-600 h-screen">
-      <div className="flex flex-col items-center justify-between bg-white shadow-lg rounded-3xl p-8 w-80 sm:w-96">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-600 p-4">
+      <div className="flex flex-col items-center justify-between bg-white shadow-lg rounded-3xl p-6 sm:p-8 w-full max-w-sm">
         <h2 className="text-2xl font-semibold text-gray-800 mb-6 whitespace-nowrap">Choose a Category</h2>
         
         <select

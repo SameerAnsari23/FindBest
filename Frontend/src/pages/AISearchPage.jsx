@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { API } from "../backend.js";
+import SearchLoader from "../components/SearchLoader.jsx";
 
 const EXAMPLES = [
   "budget phone under ₹20k good for photography",
@@ -38,7 +39,7 @@ const AISearchPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-violet-50 via-purple-50 to-indigo-100 text-center py-10 px-5">
       <h1 className="text-4xl sm:text-5xl font-bold text-purple-700 mb-3">
-        ✨ AI Search
+        AI Search
       </h1>
       <p className="text-gray-600 mb-8">
         Describe what you need in plain language — the AI finds it, ranks the
@@ -52,12 +53,12 @@ const AISearchPage = () => {
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           placeholder='e.g. "budget phone under ₹20k good for photography"'
-          className="text-lg rounded-l-full border border-purple-300 shadow-md focus:outline-none focus:ring-2 focus:ring-purple-400 px-6 py-3 w-full"
+          className="text-base sm:text-lg rounded-l-full border border-purple-300 shadow-md focus:outline-none focus:ring-2 focus:ring-purple-400 px-4 sm:px-6 py-3 w-full min-w-0"
         />
         <button
           onClick={() => handleSearch()}
           disabled={loading}
-          className="text-lg text-white bg-gradient-to-r from-purple-500 to-indigo-600 py-3 px-8 rounded-r-full shadow-lg hover:opacity-90 transition disabled:opacity-50"
+          className="text-base sm:text-lg text-white whitespace-nowrap shrink-0 bg-gradient-to-r from-purple-500 to-indigo-600 py-3 px-4 sm:px-8 rounded-r-full shadow-lg hover:opacity-90 transition disabled:opacity-50"
         >
           {loading ? "…" : "Ask AI"}
         </button>
@@ -79,12 +80,13 @@ const AISearchPage = () => {
       </div>
 
       {loading && (
-        <div className="text-purple-700 text-lg font-semibold animate-pulse">
-          Understanding your request, scraping stores, and ranking results…
-          <div className="text-sm text-gray-500 mt-1">
-            this can take a minute — live sites are being searched
-          </div>
-        </div>
+        <SearchLoader
+          icons={["🤖", "🔍", "🛍️"]}
+          message="AI is understanding, searching and ranking…"
+          subMessage="live stores are being searched — this can take a minute"
+          colorClass="text-purple-700"
+          barClass="bg-purple-600"
+        />
       )}
 
       {error && (
@@ -143,10 +145,10 @@ const AISearchPage = () => {
                       <img
                         src={r.image}
                         alt={r.name}
-                        className="w-24 h-24 object-contain rounded"
+                        className="w-20 h-20 sm:w-24 sm:h-24 object-contain rounded"
                       />
                     ) : (
-                      <div className="w-24 h-24 bg-purple-50 rounded flex items-center justify-center text-3xl">
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 bg-purple-50 rounded flex items-center justify-center text-3xl">
                         🛍️
                       </div>
                     )}

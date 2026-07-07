@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ---- themed search loaders ---- */
+@keyframes loader-bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-18px) scale(1.15); }
+}
+.loader-icon {
+  display: inline-block;
+  animation: loader-bounce 0.9s ease-in-out infinite;
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.15));
+}
+@keyframes loader-slide {
+  0% { transform: translateX(-150%); }
+  100% { transform: translateX(450%); }
+}
+.loader-bar {
+  animation: loader-slide 1.2s ease-in-out infinite;
+}

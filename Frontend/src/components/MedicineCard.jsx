@@ -23,15 +23,13 @@ const MedicineCard = ({
             <img
               src={medicineIMG}
               alt="MedicineImage"
-              width="200px"
-              height="200px"
+              className="w-full h-auto max-h-44 object-contain"
             />
           ) : (
             <img
               src="https://img.freepik.com/premium-vector/pills-liquids-medicine-children-kawaii-doodle-flat-vector-illustration_609998-86.jpg?w=2000"
               alt="MedicineImage"
-              width="200px"
-              height="200px"
+              className="w-full h-auto max-h-44 object-contain"
             />
           )}
         </div>

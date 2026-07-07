@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import SmartPhoneCard from "../components/SmartPhoneCard.jsx";
+import SearchLoader from "../components/SearchLoader.jsx";
 import { API } from "../backend.js";
 
 const SmartPhoneSearchPage = () => {
@@ -22,23 +23,23 @@ const SmartPhoneSearchPage = () => {
 
   return (
     <div className="min-h-[100vh] bg-gradient-to-br from-gray-800 to-gray-900 text-center text-black">
-      <h1 className="text-5xl font-extrabold pt-20 pb-5 text-cyan-400">
+      <h1 className="text-3xl sm:text-5xl font-extrabold pt-10 sm:pt-20 pb-5 text-cyan-400">
         Smartphone Search
       </h1>
-      <p className="text-lg text-gray-400 mb-8">
+      <p className="text-base sm:text-lg text-gray-400 mb-8 px-2">
         Search for the latest smartphones and tablets with detailed specs.
       </p>
 
-      <div className="flex justify-center mb-10">
+      <div className="flex justify-center mb-10 px-4">
         <input
           type="text"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Enter a smartphone or tablet name"
-          className="text-lg rounded-l-full border-none px-6 py-3 w-2/4 outline-none focus:ring-2 focus:ring-cyan-500 bg-gray-700 text-white"
+          className="text-base sm:text-lg rounded-l-full border-none px-4 sm:px-6 py-3 flex-1 min-w-0 max-w-md outline-none focus:ring-2 focus:ring-cyan-500 bg-gray-700 text-white"
         />
         <button
-          className="text-lg text-white px-6 py-3 rounded-r-full bg-cyan-500 hover:bg-cyan-600 transition duration-300 ease-in-out"
+          className="text-base sm:text-lg text-white px-4 sm:px-6 py-3 rounded-r-full bg-cyan-500 hover:bg-cyan-600 transition duration-300 ease-in-out whitespace-nowrap shrink-0"
           onClick={handleSearch}
         >
           Search
@@ -47,12 +48,18 @@ const SmartPhoneSearchPage = () => {
 
       <div className="mt-6 mx-auto">
         {loading ? ( // Show loading while waiting for the results
-          <div className="text-cyan-400 text-lg font-semibold">Loading...</div>
+          <SearchLoader
+            icons={["📱", "⚡", "🔋"]}
+            message="Scanning the latest smartphones…"
+            subMessage="Searching 91mobiles, Amazon & Flipkart"
+            colorClass="text-cyan-400"
+            barClass="bg-cyan-400"
+          />
         ) : searchResults.length === 0 ? (
           <p className="text-gray-400">No results found.</p>
         ) : (
-          <div className="p-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+          <div className="p-3 sm:p-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8">
               {searchResults.map((singleresult, index) => {
                 if (singleresult === null) {
                   return (

@@ -35,15 +35,13 @@ const ClothingCard = ({
             <img
               src={image}
               alt={title}
-              width="200px"
-              height="200px"
+              className="w-full h-auto max-h-44 object-contain"
             />
           ) : (
             <img
               src="https://img.freepik.com/premium-vector/pills-liquids-grocery-children-kawaii-doodle-flat-vector-illustration_609998-86.jpg?w=2000"
               alt="placeholder"
-              width="200px"
-              height="200px"
+              className="w-full h-auto max-h-44 object-contain"
             />
           )}
         </div>
