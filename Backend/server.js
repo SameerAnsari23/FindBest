@@ -13,7 +13,7 @@ app.use(
   cors({
     // Allow the deployed frontend plus any localhost port in development
     // (CRA falls back to 3001, 3002, ... when 3000 is already taken).
-    origin: ["https://deploy-mern-1whq.vercel.app", /^http:\/\/localhost:\d+$/],
+    origin: ["https://find-best-tau.vercel.app/", /^http:\/\/localhost:\d+$/],
     methods: ["POST", "GET"],
     credentials: true,
   })
