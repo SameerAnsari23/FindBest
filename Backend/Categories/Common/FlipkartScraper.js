@@ -53,8 +53,12 @@ const searchFlipkart = async (query, maxItems = 6) => {
         const mrp = prices[1] || null;
         if (!price) continue;
 
-        const ratingMatch = text.match(/(\d\.\d)[\d,]*\s*Ratings/);
+        // e.g. "4.616,387 Ratings" -> rating 4.6, count 16387
+        const ratingMatch = text.match(/(\d\.\d)([\d,]*)\s*Ratings/);
         const rating = ratingMatch ? `${ratingMatch[1]}/5` : "";
+        const ratingCount = ratingMatch
+          ? parseInt(ratingMatch[2].replace(/,/g, ""), 10) || 0
+          : 0;
 
         out.push({
           name,
@@ -63,6 +67,7 @@ const searchFlipkart = async (query, maxItems = 6) => {
           price,
           mrp,
           rating,
+          ratingCount,
           scrapFrom: "Flipkart",
         });
         if (out.length >= max) break;

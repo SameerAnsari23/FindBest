@@ -49,6 +49,17 @@ const searchAmazon = async (query, maxItems = 6) => {
         const ratingText = c.querySelector(".a-icon-alt")?.textContent || "";
         const rating = ratingText ? ratingText.split(" ")[0] + "/5" : "";
 
+        // Rater count, e.g. "(30.9K)" or "(1,234)"
+        const countText =
+          c.querySelector('a[href*="#customerReviews"]')?.textContent.trim() || "";
+        const cm = countText.replace(/[(),\s]/g, "").match(/^([\d.]+)([KkMm]?)$/);
+        const ratingCount = cm
+          ? Math.round(
+              parseFloat(cm[1]) *
+                (cm[2].toLowerCase() === "k" ? 1000 : cm[2].toLowerCase() === "m" ? 1000000 : 1)
+            )
+          : 0;
+
         if (!price) continue; // unavailable items
         out.push({
           name,
@@ -57,6 +68,7 @@ const searchAmazon = async (query, maxItems = 6) => {
           price,
           mrp,
           rating,
+          ratingCount,
           scrapFrom: "Amazon",
         });
         if (out.length >= max) break;

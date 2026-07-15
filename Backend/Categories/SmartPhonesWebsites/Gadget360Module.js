@@ -32,12 +32,16 @@ const getelectronicdesc = async (URL) => {
           const SPEC_SCORE = el.querySelector(".prd_score")?.textContent.trim() || "N/A";
           const Status =
             el.querySelector(".rl-date")?.textContent.trim() || "Available";
-          // e.g. "4.6/5(16,044 Ratings)" — keep just "4.6/5"
+          // e.g. "4.6/5(16,044 Ratings)" — rating "4.6/5", count 16044
           const ratingRaw =
             el.querySelector(".user_rating .icn_star")?.textContent.trim() || "";
           const Ratings = ratingRaw ? ratingRaw.split("(")[0] : "N/A";
+          const countMatch = ratingRaw.match(/\(([\d,]+)\s*Ratings?\)/i);
+          const RatingCount = countMatch
+            ? parseInt(countMatch[1].replace(/,/g, ""), 10)
+            : 0;
 
-          return { name, image, price, SPEC_SCORE, Status, Ratings, fullURL, scrapFrom: "91mobiles" };
+          return { name, image, price, SPEC_SCORE, Status, Ratings, RatingCount, fullURL, scrapFrom: "91mobiles" };
         })
         .filter((p) => p.name);
     });
