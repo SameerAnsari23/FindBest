@@ -1,1 +1,1 @@
-export const API = process.env.REACT_APP_API_URL || "http://localhost:4000";
+export const API = "https://findbest-8jw3.onrender.com" || "http://localhost:4000";
